@@ -1,48 +1,36 @@
 # Example file showing a basic pygame "game loop"
 import pygame
+import math
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((600, 600))
+width, height = 600, 600
+screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 running = True
 
-positions = [
-    (125, 300),
-    (300, 125),
-    (475, 300),
-    (300, 475)
-]
-
-pos = 0
+centro_x, centro_y = width // 2, height // 2
+raio_orbita = 175
+velocidade_angular = 0.02
+angulo = 0 #angulo inicial
 
 while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                pos += 1
-                if pos > len(positions) - 1:
-                    pos = 0
-                    
-    # every 1 seconds
-    if pygame.time.get_ticks() % (60 * 1) == 0:
-        pos += 1
-        if pos > len(positions) - 1:
-            pos = 0
+    angulo += velocidade_angular
 
-    # fill the screen with a color to wipe away anything from last frame
+    orbita_x = centro_x + raio_orbita * math.cos(angulo)
+    orbita_y = centro_y + raio_orbita * math.sin(angulo)
+                    
     screen.fill("#FFD166")
 
-    pos_circle = positions[pos]
+    pygame.draw.circle(screen, "#FB6286", (centro_x, centro_y), 200)
+    pygame.draw.circle(screen, "#FFD166", (centro_x, centro_y), 150)
+    pygame.draw.circle(screen, "#073B4C", (int(orbita_x), int(orbita_y)), 25)
 
-    pygame.draw.circle(screen, "#FB6286", (300, 300), 200)
-    pygame.draw.circle(screen, "#FFD166", (300, 300), 150)
-    pygame.draw.circle(screen, "#073B4C", pos_circle, 25)
+    pygame.draw.flip()
 
     # flip() the display to put your work on screen
     pygame.display.flip()
