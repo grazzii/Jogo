@@ -25,8 +25,60 @@ percentual_fatia = 0.1
 angulo_fatia = 2 * math.pi * percentual_fatia
 cor_fatia = "#C94869"  # versão mais escura do rosa (#FB6286)
 
+# parâmetros da seta
+tamanho_seta = 40
+largura_seta = 30
+cor_seta = "#073B4C"
+direcao_seta = "up"  # pode ser "up", "down", "left", "right"
+
+def desenha_seta(screen, x, y, direcao, tamanho, largura, cor):
+    """
+    Desenha uma seta na direção especificada
+    :param screen: superfície do pygame
+    :param x: posição x do centro
+    :param y: posição y do centro
+    :param direcao: 'up', 'down', 'left', 'right'
+    :param tamanho: altura/comprimento da seta
+    :param largura: largura da base da seta
+    :param cor: cor da seta
+    """
+    if direcao == "up":
+        pontos = [
+            (x, y - tamanho),      # ponta
+            (x - largura//2, y),   # base esquerda
+            (x + largura//2, y)    # base direita
+        ]
+    elif direcao == "down":
+        pontos = [
+            (x, y + tamanho),      # ponta
+            (x - largura//2, y),   # base esquerda
+            (x + largura//2, y)    # base direita
+        ]
+    elif direcao == "left":
+        pontos = [
+            (x - tamanho, y),      # ponta
+            (x, y - largura//2),   # base superior
+            (x, y + largura//2)    # base inferior
+        ]
+    elif direcao == "right":
+        pontos = [
+            (x + tamanho, y),      # ponta
+            (x, y - largura//2),   # base superior
+            (x, y + largura//2)    # base inferior
+        ]
+    
+    pygame.draw.polygon(screen, cor, pontos)
+
 angulo_inicio = random.randint(0, 360)
 angulo_fim = angulo_inicio + angulo_fatia
+
+# mapeia as setas do teclado para as direções da seta
+setas_para_direcao = {
+    pygame.K_UP: "up",
+    pygame.K_DOWN: "down",
+    pygame.K_LEFT: "left",
+    pygame.K_RIGHT: "right"
+}
 
 # main
 while running:
@@ -35,10 +87,21 @@ while running:
             running = False
             
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                percentual_fatia = random.uniform(0.1, 0.5)
-                angulo_inicio = random.randint(0, 360)
-                angulo_fim = angulo_inicio + angulo_fatia
+            if event.key in [
+                pygame.K_UP,
+                pygame.K_DOWN,
+                pygame.K_LEFT,
+                pygame.K_RIGHT
+            ]:
+                # se a direção da seta é a mesma, muda a direção e o ângulo
+                if setas_para_direcao[event.key] == direcao_seta:
+                    percentual_fatia = random.uniform(0.1, 0.5)
+                    angulo_inicio = random.randint(0, 360)
+                    angulo_fim = angulo_inicio + angulo_fatia
+                    direcao_seta = random.choice(["up", "down", "left", "right"])
+                else:
+                    # para de girar por 1 segundo
+                    pygame.time.wait(1000)
 
     # att a posição do objeto em órbita
     angulo += velocidade_angular
@@ -72,6 +135,9 @@ while running:
     
     # Desenha o polígono preenchido
     pygame.draw.polygon(screen, cor_fatia, pontos_fatia)
+    
+    # Desenha a seta na direção atual
+    desenha_seta(screen, centro_x, centro_y, direcao_seta, tamanho_seta, largura_seta, cor_seta)
     
     # objeto em órbita
     pygame.draw.circle(screen, "#073B4C", (int(orbita_x), int(orbita_y)), 25)
