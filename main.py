@@ -14,7 +14,7 @@ font = pygame.font.SysFont("Comic Sans MS", 16)
 # parâmetros da órbita
 centro_x, centro_y = width // 2, height // 2
 raio_orbita = 175
-velocidade_angular = 0.06
+velocidade_angular = 0.1
 angulo = 0 
 running = True
 
@@ -95,7 +95,8 @@ while running:
             ]:
                 # se a direção da seta é a mesma, muda a direção e o ângulo
                 if setas_para_direcao[event.key] == direcao_seta:
-                    percentual_fatia = random.uniform(0.1, 0.5)
+                    percentual_fatia = random.uniform(0.05, 0.3)
+                    angulo_fatia = 2 * math.pi * percentual_fatia
                     angulo_inicio = random.randint(0, 360)
                     angulo_fim = angulo_inicio + angulo_fatia
                     direcao_seta = random.choice(["up", "down", "left", "right"])
