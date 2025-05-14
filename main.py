@@ -1,6 +1,6 @@
 import pygame
 import math
-
+import random
 pygame.init()
 
 # configurações da tela
@@ -14,22 +14,31 @@ font = pygame.font.SysFont("Comic Sans MS", 16)
 # parâmetros da órbita
 centro_x, centro_y = width // 2, height // 2
 raio_orbita = 175
-velocidade_angular = 0.02
+velocidade_angular = 0.06
 angulo = 0 
 running = True
 
 # parâmetros da fatia do donut
 raio_externo = 200
 raio_interno = 150
-percentual_fatia = 0.3  # 30% do donut
+percentual_fatia = 0.1
 angulo_fatia = 2 * math.pi * percentual_fatia
 cor_fatia = "#C94869"  # versão mais escura do rosa (#FB6286)
+
+angulo_inicio = random.randint(0, 360)
+angulo_fim = angulo_inicio + angulo_fatia
 
 # main
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+            
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                percentual_fatia = random.uniform(0.1, 0.5)
+                angulo_inicio = random.randint(0, 360)
+                angulo_fim = angulo_inicio + angulo_fatia
 
     # att a posição do objeto em órbita
     angulo += velocidade_angular
@@ -42,11 +51,7 @@ while running:
     # desenho dos círculos
     pygame.draw.circle(screen, "#FB6286", (centro_x, centro_y), raio_externo)
     pygame.draw.circle(screen, "#FFD166", (centro_x, centro_y), raio_interno)
-    
-    # desenha a fatia do donut (30% mais escura)
-    angulo_inicio = 0  # começa em 0 radianos (à direita)
-    angulo_fim = angulo_inicio + angulo_fatia
-    
+
     # cria uma lista de pontos para formar o polígono da fatia
     pontos_fatia = []
     
@@ -57,7 +62,7 @@ while running:
         x = centro_x + raio_externo * math.cos(angulo_atual)
         y = centro_y + raio_externo * math.sin(angulo_atual)
         pontos_fatia.append((x, y))
-    
+
     # Adiciona os pontos ao longo do arco interno (em ordem reversa)
     for i in range(num_segmentos, -1, -1):
         angulo_atual = angulo_inicio + (angulo_fim - angulo_inicio) * (i / num_segmentos)
