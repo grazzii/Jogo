@@ -18,6 +18,13 @@ velocidade_angular = 0.02
 angulo = 0 
 running = True
 
+# parâmetros da fatia do donut
+raio_externo = 200
+raio_interno = 150
+percentual_fatia = 0.3  # 30% do donut
+angulo_fatia = 2 * math.pi * percentual_fatia
+cor_fatia = "#C94869"  # versão mais escura do rosa (#FB6286)
+
 # main
 while running:
     for event in pygame.event.get():
@@ -33,8 +40,35 @@ while running:
     screen.fill("#FFD166")
 
     # desenho dos círculos
-    pygame.draw.circle(screen, "#FB6286", (centro_x, centro_y), 200)
-    pygame.draw.circle(screen, "#FFD166", (centro_x, centro_y), 150)
+    pygame.draw.circle(screen, "#FB6286", (centro_x, centro_y), raio_externo)
+    pygame.draw.circle(screen, "#FFD166", (centro_x, centro_y), raio_interno)
+    
+    # desenha a fatia do donut (30% mais escura)
+    angulo_inicio = 0  # começa em 0 radianos (à direita)
+    angulo_fim = angulo_inicio + angulo_fatia
+    
+    # cria uma lista de pontos para formar o polígono da fatia
+    pontos_fatia = []
+    
+    # Adiciona os pontos ao longo do arco externo
+    num_segmentos = 20  # mais segmentos para uma curva mais suave
+    for i in range(num_segmentos + 1):
+        angulo_atual = angulo_inicio + (angulo_fim - angulo_inicio) * (i / num_segmentos)
+        x = centro_x + raio_externo * math.cos(angulo_atual)
+        y = centro_y + raio_externo * math.sin(angulo_atual)
+        pontos_fatia.append((x, y))
+    
+    # Adiciona os pontos ao longo do arco interno (em ordem reversa)
+    for i in range(num_segmentos, -1, -1):
+        angulo_atual = angulo_inicio + (angulo_fim - angulo_inicio) * (i / num_segmentos)
+        x = centro_x + raio_interno * math.cos(angulo_atual)
+        y = centro_y + raio_interno * math.sin(angulo_atual)
+        pontos_fatia.append((x, y))
+    
+    # Desenha o polígono preenchido
+    pygame.draw.polygon(screen, cor_fatia, pontos_fatia)
+    
+    # objeto em órbita
     pygame.draw.circle(screen, "#073B4C", (int(orbita_x), int(orbita_y)), 25)
 
     # FPS
