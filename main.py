@@ -39,7 +39,6 @@ feedback_timer = 0
 # sons de feedback
 som_perfeito = pygame.mixer.Sound("perfeito.wav")
 som_bom = pygame.mixer.Sound("bom.wav")
-som_ruim = pygame.mixer.Sound("ruim.wav")
 som_erro = pygame.mixer.Sound("erro.wav")
 
 # pontuação
@@ -144,23 +143,16 @@ while running:
                         centro_fatia_graus = math.degrees(centro_fatia)
                         distancia = abs((angulo_bolinha_graus - centro_fatia_graus + 180) % 360 - 180)
 
-                        if distancia < 10:
+                        if distancia < 15:
                             feedback_texto = "Perfeito!"
                             som_perfeito.play()
                             pontuacao += 100
-                        elif distancia < 25:
+                        else:
                             feedback_texto = "Bom!"
                             som_bom.play()
                             pontuacao += 50
-                        elif distancia < 45:
-                            feedback_texto = "Ruim!"
-                            som_ruim.play()
-                            pontuacao += 10
-                        else:
-                            feedback_texto = "Ruim demais!"
-                            som_ruim.play()
                     else:
-                        feedback_texto = "Errou! Fora da fatia."
+                        feedback_texto = "Erro!"
                         som_erro.play()
 
                     feedback_timer = pygame.time.get_ticks()
@@ -172,7 +164,7 @@ while running:
                     direcao_seta = random.choice(["up", "down", "left", "right"])
                 else:
                     # para de girar por 1 segundo
-                    feedback_texto = "Errou a direção!"
+                    feedback_texto = "Erro!"
                     som_erro.play()
                     feedback_timer = pygame.time.get_ticks()
                     pygame.time.wait(1000)
