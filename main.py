@@ -13,6 +13,10 @@ pygame.display.set_caption("Lumon Órbita")
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Comic Sans MS", 16)
 
+# pontuação e ID fixo
+pontuacao = 0
+id_funcionario = f"FUNC-{random.randint(7000, 9999)}"
+
 # intro lumon
 def desenha_mark(surface, x, y, expressao=None):
     pygame.draw.rect(surface, (20, 30, 60), (x + 4, y - 30, 10, 20))
@@ -37,8 +41,7 @@ def desenha_mark(surface, x, y, expressao=None):
     pygame.draw.circle(surface, cor_olho, (x + 9, y - 88), 2)
     pygame.draw.circle(surface, cor_olho, (x + 21, y - 88), 2)
 
-def desenha_hud(pontuacao):
-    id_func = "FUNC-" + str(7000 + pontuacao // 10)
+def desenha_hud(pontuacao, id_func):
     conformidade = min(100, pontuacao // 10)
 
     pygame.draw.rect(screen, (50, 50, 50), (10, 10, 120, 15))
@@ -49,11 +52,9 @@ def desenha_hud(pontuacao):
     id_text = font.render(f"ID: {id_func}", True, (0, 0, 0))
     screen.blit(id_text, (width - id_text.get_width() - 10, 35))
 
-
-def mostrar_relatorio_final(pontuacao, setor):
+def mostrar_relatorio_final(pontuacao, setor, id_func):
     screen.fill((240, 240, 240))
     relatorio_font = pygame.font.SysFont("Courier New", 20, bold=True)
-    id_func = "FUNC-" + str(7000 + pontuacao // 10)
     textos = [
         "RELATÓRIO FINAL - LUMON",
         f"ID do Funcionário: {id_func}",
@@ -152,38 +153,25 @@ raio_externo = 200
 raio_interno = 150
 percentual_fatia = 0.1
 angulo_fatia = 2 * math.pi * percentual_fatia
-cor_fatia = "#C94869"  # versão mais escura do rosa (#FB6286)
+cor_fatia = "#C94869"
 
 # parâmetros da seta
 tamanho_seta = 40
 largura_seta = 30
 cor_seta = "#073B4C"
-direcao_seta = "up"  # pode ser "up", "down", "left", "right"
+direcao_seta = "up"
 
 # variáveis de feedback
 distancia = 0
 feedback_texto = ""
 feedback_timer = 0
 
-# sons de feedback
-som_perfeito = pygame.mixer.Sound("../perfeito.wav")
-som_bom = pygame.mixer.Sound("../bom.wav")
-som_erro = pygame.mixer.Sound("../erro.wav")
+# sons
+som_perfeito = pygame.mixer.Sound("../Jogo/perfeito.wav")
+som_bom = pygame.mixer.Sound("../Jogo/bom.wav")
+som_erro = pygame.mixer.Sound("../Jogo/erro.wav")
 
-# pontuação
-pontuacao = 0
-
-def desenha_seta(screen, x, y, direcao, tamanho, largura, cor):
-    if direcao == "up":
-        pontos = [(x, y - tamanho), (x - largura//2, y), (x + largura//2, y)]
-    elif direcao == "down":
-        pontos = [(x, y + tamanho), (x - largura//2, y), (x + largura//2, y)]
-    elif direcao == "left":
-        pontos = [(x - tamanho, y), (x, y - largura//2), (x, y + largura//2)]
-    elif direcao == "right":
-        pontos = [(x + tamanho, y), (x, y - largura//2), (x, y + largura//2)]
-    pygame.draw.polygon(screen, cor, pontos)
-
+# direção inicial
 angulo_inicio = random.uniform(0, 2 * math.pi)
 angulo_fim = angulo_inicio + angulo_fatia
 
@@ -212,7 +200,6 @@ def atualizar_fase(pontuacao):
         velocidade_angular = -0.2
         fase_texto = "Fase 3 - Sala de Quebra"
 
-# main
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -263,7 +250,7 @@ while running:
     atualizar_fase(pontuacao)
 
     if pontuacao >= 1000:
-        mostrar_relatorio_final(pontuacao, fase_texto)
+        mostrar_relatorio_final(pontuacao, fase_texto, id_funcionario)
 
     angulo += velocidade_angular
     orbita_x = centro_x + raio_orbita * math.cos(angulo)
@@ -290,7 +277,17 @@ while running:
 
     pygame.draw.polygon(screen, cor_fatia, pontos_fatia)
 
-    desenha_seta(screen, centro_x, centro_y, direcao_seta, tamanho_seta, largura_seta, cor_seta)
+    # seta
+    if direcao_seta == "up":
+        pontos = [(centro_x, centro_y - tamanho_seta), (centro_x - largura_seta//2, centro_y), (centro_x + largura_seta//2, centro_y)]
+    elif direcao_seta == "down":
+        pontos = [(centro_x, centro_y + tamanho_seta), (centro_x - largura_seta//2, centro_y), (centro_x + largura_seta//2, centro_y)]
+    elif direcao_seta == "left":
+        pontos = [(centro_x - tamanho_seta, centro_y), (centro_x, centro_y - largura_seta//2), (centro_x, centro_y + largura_seta//2)]
+    elif direcao_seta == "right":
+        pontos = [(centro_x + tamanho_seta, centro_y), (centro_x, centro_y - largura_seta//2), (centro_x, centro_y + largura_seta//2)]
+    pygame.draw.polygon(screen, cor_seta, pontos)
+
     pygame.draw.circle(screen, "#073B4C", (int(orbita_x), int(orbita_y)), 25)
 
     if pygame.time.get_ticks() - feedback_timer < 1000:
@@ -307,7 +304,7 @@ while running:
     fps_text = font.render(f"FPS: {fps}", True, (0, 0, 0))
     screen.blit(fps_text, (10, 30))
 
-    desenha_hud(pontuacao)
+    desenha_hud(pontuacao, id_funcionario)
     desenha_mark(screen, width - 60, height - 10)
 
     pygame.display.flip()
