@@ -4,8 +4,9 @@
 * adicionar 3 fases, a mais dificil com inversão no sentido da rotação
 * adicionar feedback de acerto e erro
 * adicionar pontuação
-* adicionar menu
-
+* grid
+* bolinha
+* texto introdução ao jogo
 * adicionar música
 * adicionar efeitos sonoros
 
