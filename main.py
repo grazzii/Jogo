@@ -8,7 +8,7 @@ pygame.init()
 # configurações da tela
 width, height = 600, 600
 screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Lumon Órbita")
+pygame.display.set_caption("Bem-vindo à Lumon")
 
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Comic Sans MS", 16)
@@ -16,6 +16,117 @@ font = pygame.font.SysFont("Comic Sans MS", 16)
 # pontuação e ID fixo
 pontuacao = 0
 id_funcionario = f"FUNC-{random.randint(7000, 9999)}"
+
+# Variáveis de controle do jogo
+game_state = "menu"  # menu, playing, paused
+running = True
+
+# Cores
+COR_FUNDO = (236, 239, 244)
+COR_TEXTO = (30, 30, 30)
+COR_SOMBRA = (180, 180, 180)
+COR_DESTAQUE = (0, 51, 102)
+
+def desenha_botao(texto, x, y, largura, altura, cor_normal, cor_destaque, acao=None):
+    mouse = pygame.mouse.get_pos()
+    clique = pygame.mouse.get_pressed()
+    
+    if x < mouse[0] < x + largura and y < mouse[1] < y + altura:
+        pygame.draw.rect(screen, cor_destaque, (x, y, largura, altura))
+        if clique[0] == 1 and acao is not None:
+            return acao
+    else:
+        pygame.draw.rect(screen, cor_normal, (x, y, largura, altura))
+    
+    texto_surf = font.render(texto, True, (255, 255, 255))
+    texto_rect = texto_surf.get_rect(center=(x + largura/2, y + altura/2))
+    screen.blit(texto_surf, texto_rect)
+    return None
+
+def mostrar_menu_principal():
+    global game_state, pontuacao
+    
+    while game_state == "menu":
+        screen.fill(COR_FUNDO)
+        
+        titulo_font = pygame.font.SysFont("Courier New", 36, bold=True)
+        titulo = titulo_font.render("LUMON", True, COR_DESTAQUE)
+        screen.blit(titulo, (width//2 - titulo.get_width()//2, 100))
+        
+        subtitulo_font = pygame.font.SysFont("Courier New", 16)
+        subtitulo = subtitulo_font.render("Protocolo de Severance", True, COR_TEXTO)
+        screen.blit(subtitulo, (width//2 - subtitulo.get_width()//2, 150))
+        
+        # Mark no menu
+        desenha_mark(screen, width//2 - 15, 250)
+        
+        # Botões do menu
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return "quit"
+        
+        acao = desenha_botao("INICIAR TAREFA", width//2 - 100, 300, 200, 50, 
+                            (50, 50, 50), (0, 100, 0), "start")
+        if acao == "start":
+            game_state = "playing"
+            pontuacao = 0  # Resetar pontuação ao iniciar novo jogo
+        
+        acao = desenha_botao("SAIR", width//2 - 100, 370, 200, 50, 
+                            (50, 50, 50), (100, 0, 0), "quit")
+        if acao == "quit":
+            return "quit"
+        
+        pygame.display.flip()
+        clock.tick(60)
+    return None
+
+def mostrar_menu_pausa():
+    global game_state
+    
+    while game_state == "paused":
+        screen.fill(COR_FUNDO)
+        
+        titulo_font = pygame.font.SysFont("Courier New", 36, bold=True)
+        titulo = titulo_font.render("JOGO PAUSADO", True, COR_DESTAQUE)
+        screen.blit(titulo, (width//2 - titulo.get_width()//2, 100))
+        
+        # Desenha o Mark no menu de pausa
+        desenha_mark(screen, width//2 - 15, 200, "erro")
+        
+        # Botões do menu de pausa
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    game_state = "playing"
+                    return None
+        
+        acao = desenha_botao("CONTINUAR", width//2 - 100, 250, 200, 50, 
+                            (50, 50, 50), (0, 100, 0), "continue")
+        if acao == "continue":
+            game_state = "playing"
+        
+        acao = desenha_botao("REINICIAR", width//2 - 100, 320, 200, 50, 
+                            (50, 50, 50), (100, 100, 0), "restart")
+        if acao == "restart":
+            game_state = "playing"
+            return "restart"
+        
+        acao = desenha_botao("MENU PRINCIPAL", width//2 - 100, 390, 200, 50, 
+                            (50, 50, 50), (100, 0, 0), "menu")
+        if acao == "menu":
+            game_state = "menu"
+            return "menu"
+        
+        pygame.display.flip()
+        clock.tick(60)
+    return None
 
 # intro lumon
 def desenha_mark(surface, x, y, expressao=None):
@@ -139,6 +250,12 @@ def mostrar_intro_lumon():
         pygame.display.flip()
         clock.tick(60)
 
+# Mostrar menu principal antes da intro
+resultado_menu = mostrar_menu_principal()
+if resultado_menu == "quit":
+    pygame.quit()
+    sys.exit()
+
 mostrar_intro_lumon()
 
 # parâmetros da órbita
@@ -146,7 +263,6 @@ centro_x, centro_y = width // 2, height // 2
 raio_orbita = 175
 velocidade_angular = 0.1
 angulo = 0 
-running = True
 
 # parâmetros da fatia do donut
 raio_externo = 200
@@ -166,10 +282,10 @@ distancia = 0
 feedback_texto = ""
 feedback_timer = 0
 
-# sons
-som_perfeito = pygame.mixer.Sound("../Jogo/perfeito.wav")
-som_bom = pygame.mixer.Sound("../Jogo/bom.wav")
-som_erro = pygame.mixer.Sound("../Jogo/erro.wav")
+# sons (substitua pelos seus arquivos de som reais)
+som_perfeito = pygame.mixer.Sound("perfeito.wav") if pygame.mixer.get_init() else None
+som_bom = pygame.mixer.Sound("bom.wav") if pygame.mixer.get_init() else None
+som_erro = pygame.mixer.Sound("erro.wav") if pygame.mixer.get_init() else None
 
 # direção inicial
 angulo_inicio = random.uniform(0, 2 * math.pi)
@@ -200,13 +316,20 @@ def atualizar_fase(pontuacao):
         velocidade_angular = -0.2
         fase_texto = "Fase 3 - Sala de Quebra"
 
+# Loop principal do jogo
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+        
         if event.type == pygame.KEYDOWN:
-            if event.key in setas_para_direcao:
+            if event.key == pygame.K_ESCAPE:
+                if game_state == "playing":
+                    game_state = "paused"
+                elif game_state == "paused":
+                    game_state = "playing"
+            
+            if game_state == "playing" and event.key in setas_para_direcao:
                 if setas_para_direcao[event.key] == direcao_seta:
                     angulo_bolinha = angulo % (2 * math.pi)
                     inicio = angulo_inicio % (2 * math.pi)
@@ -225,15 +348,15 @@ while running:
 
                         if distancia < 15:
                             feedback_texto = "Perfeito!"
-                            som_perfeito.play()
+                            if som_perfeito: som_perfeito.play()
                             pontuacao += 100
                         else:
                             feedback_texto = "Bom!"
-                            som_bom.play()
+                            if som_bom: som_bom.play()
                             pontuacao += 50
                     else:
                         feedback_texto = "Erro!"
-                        som_erro.play()
+                        if som_erro: som_erro.play()
 
                     feedback_timer = pygame.time.get_ticks()
                     percentual_fatia = random.uniform(0.05, 0.3)
@@ -243,69 +366,96 @@ while running:
                     direcao_seta = random.choice(["up", "down", "left", "right"])
                 else:
                     feedback_texto = "Erro!"
-                    som_erro.play()
+                    if som_erro: som_erro.play()
                     feedback_timer = pygame.time.get_ticks()
                     pygame.time.wait(1000)
+    
+    if game_state == "menu":
+        resultado = mostrar_menu_principal()
+        if resultado == "quit":
+            running = False
+        elif resultado == "start":
+            game_state = "playing"
+    
+    elif game_state == "paused":
+        resultado = mostrar_menu_pausa()
+        if resultado == "quit":
+            running = False
+        elif resultado == "menu":
+            game_state = "menu"
+        elif resultado == "restart":
+            # Reiniciar variáveis do jogo
+            pontuacao = 0
+            angulo = 0
+            velocidade_angular = 0.1
+            fase = 1
+            fase_texto = "Refinamento de Dados"
+            percentual_fatia = 0.1
+            angulo_fatia = 2 * math.pi * percentual_fatia
+            angulo_inicio = random.uniform(0, 2 * math.pi)
+            angulo_fim = angulo_inicio + angulo_fatia
+            direcao_seta = random.choice(["up", "down", "left", "right"])
+    
+    elif game_state == "playing":
+        atualizar_fase(pontuacao)
 
-    atualizar_fase(pontuacao)
+        if pontuacao >= 1000:
+            mostrar_relatorio_final(pontuacao, fase_texto, id_funcionario)
 
-    if pontuacao >= 1000:
-        mostrar_relatorio_final(pontuacao, fase_texto, id_funcionario)
+        angulo += velocidade_angular
+        orbita_x = centro_x + raio_orbita * math.cos(angulo)
+        orbita_y = centro_y + raio_orbita * math.sin(angulo)
 
-    angulo += velocidade_angular
-    orbita_x = centro_x + raio_orbita * math.cos(angulo)
-    orbita_y = centro_y + raio_orbita * math.sin(angulo)
+        screen.fill("#FFD166")
 
-    screen.fill("#FFD166")
+        pygame.draw.circle(screen, "#FB6286", (centro_x, centro_y), raio_externo)
+        pygame.draw.circle(screen, "#FFD166", (centro_x, centro_y), raio_interno)
 
-    pygame.draw.circle(screen, "#FB6286", (centro_x, centro_y), raio_externo)
-    pygame.draw.circle(screen, "#FFD166", (centro_x, centro_y), raio_interno)
+        pontos_fatia = []
+        num_segmentos = 20
+        for i in range(num_segmentos + 1):
+            angulo_atual = angulo_inicio + (angulo_fim - angulo_inicio) * (i / num_segmentos)
+            x = centro_x + raio_externo * math.cos(angulo_atual)
+            y = centro_y + raio_externo * math.sin(angulo_atual)
+            pontos_fatia.append((x, y))
 
-    pontos_fatia = []
-    num_segmentos = 20
-    for i in range(num_segmentos + 1):
-        angulo_atual = angulo_inicio + (angulo_fim - angulo_inicio) * (i / num_segmentos)
-        x = centro_x + raio_externo * math.cos(angulo_atual)
-        y = centro_y + raio_externo * math.sin(angulo_atual)
-        pontos_fatia.append((x, y))
+        for i in range(num_segmentos, -1, -1):
+            angulo_atual = angulo_inicio + (angulo_fim - angulo_inicio) * (i / num_segmentos)
+            x = centro_x + raio_interno * math.cos(angulo_atual)
+            y = centro_y + raio_interno * math.sin(angulo_atual)
+            pontos_fatia.append((x, y))
 
-    for i in range(num_segmentos, -1, -1):
-        angulo_atual = angulo_inicio + (angulo_fim - angulo_inicio) * (i / num_segmentos)
-        x = centro_x + raio_interno * math.cos(angulo_atual)
-        y = centro_y + raio_interno * math.sin(angulo_atual)
-        pontos_fatia.append((x, y))
+        pygame.draw.polygon(screen, cor_fatia, pontos_fatia)
 
-    pygame.draw.polygon(screen, cor_fatia, pontos_fatia)
+        # seta
+        if direcao_seta == "up":
+            pontos = [(centro_x, centro_y - tamanho_seta), (centro_x - largura_seta//2, centro_y), (centro_x + largura_seta//2, centro_y)]
+        elif direcao_seta == "down":
+            pontos = [(centro_x, centro_y + tamanho_seta), (centro_x - largura_seta//2, centro_y), (centro_x + largura_seta//2, centro_y)]
+        elif direcao_seta == "left":
+            pontos = [(centro_x - tamanho_seta, centro_y), (centro_x, centro_y - largura_seta//2), (centro_x, centro_y + largura_seta//2)]
+        elif direcao_seta == "right":
+            pontos = [(centro_x + tamanho_seta, centro_y), (centro_x, centro_y - largura_seta//2), (centro_x, centro_y + largura_seta//2)]
+        pygame.draw.polygon(screen, cor_seta, pontos)
 
-    # seta
-    if direcao_seta == "up":
-        pontos = [(centro_x, centro_y - tamanho_seta), (centro_x - largura_seta//2, centro_y), (centro_x + largura_seta//2, centro_y)]
-    elif direcao_seta == "down":
-        pontos = [(centro_x, centro_y + tamanho_seta), (centro_x - largura_seta//2, centro_y), (centro_x + largura_seta//2, centro_y)]
-    elif direcao_seta == "left":
-        pontos = [(centro_x - tamanho_seta, centro_y), (centro_x, centro_y - largura_seta//2), (centro_x, centro_y + largura_seta//2)]
-    elif direcao_seta == "right":
-        pontos = [(centro_x + tamanho_seta, centro_y), (centro_x, centro_y - largura_seta//2), (centro_x, centro_y + largura_seta//2)]
-    pygame.draw.polygon(screen, cor_seta, pontos)
+        pygame.draw.circle(screen, "#073B4C", (int(orbita_x), int(orbita_y)), 25)
 
-    pygame.draw.circle(screen, "#073B4C", (int(orbita_x), int(orbita_y)), 25)
+        if pygame.time.get_ticks() - feedback_timer < 1000:
+            texto = font.render(feedback_texto, True, (0, 0, 0))
+            screen.blit(texto, (width // 2 - texto.get_width() // 2, 20))
 
-    if pygame.time.get_ticks() - feedback_timer < 1000:
-        texto = font.render(feedback_texto, True, (0, 0, 0))
-        screen.blit(texto, (width // 2 - texto.get_width() // 2, 20))
+        texto_ponto = font.render(f"Pontuação: {pontuacao}", True, (0, 0, 0))
+        screen.blit(texto_ponto, (width - 150, 10))
 
-    texto_ponto = font.render(f"Pontuação: {pontuacao}", True, (0, 0, 0))
-    screen.blit(texto_ponto, (width - 150, 10))
+        texto_fase = font.render(fase_texto, True, (0, 0, 0))
+        screen.blit(texto_fase, (10, height - 30))
 
-    texto_fase = font.render(fase_texto, True, (0, 0, 0))
-    screen.blit(texto_fase, (10, height - 30))
+        fps = int(clock.get_fps())
+        fps_text = font.render(f"FPS: {fps}", True, (0, 0, 0))
+        screen.blit(fps_text, (10, 30))
 
-    fps = int(clock.get_fps())
-    fps_text = font.render(f"FPS: {fps}", True, (0, 0, 0))
-    screen.blit(fps_text, (10, 30))
-
-    desenha_hud(pontuacao, id_funcionario)
-    desenha_mark(screen, width - 60, height - 10)
+        desenha_hud(pontuacao, id_funcionario)
+        desenha_mark(screen, width - 60, height - 10)
 
     pygame.display.flip()
     clock.tick(60)
