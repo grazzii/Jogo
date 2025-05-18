@@ -5,7 +5,6 @@
 * adicionar feedback de acerto e erro
 * adicionar pontuação
 * grid
-* bolinha
 * texto introdução ao jogo
 * adicionar música
 * adicionar efeitos sonoros
