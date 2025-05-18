@@ -37,9 +37,9 @@ feedback_texto = ""
 feedback_timer = 0
 
 # sons de feedback
-som_perfeito = pygame.mixer.Sound("perfeito.wav")
-som_bom = pygame.mixer.Sound("bom.wav")
-som_erro = pygame.mixer.Sound("erro.wav")
+som_perfeito = pygame.mixer.Sound("../perfeito.wav")
+som_bom = pygame.mixer.Sound("../bom.wav")
+som_erro = pygame.mixer.Sound("../erro.wav")
 
 # pontuação
 pontuacao = 0
