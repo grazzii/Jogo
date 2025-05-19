@@ -3,6 +3,7 @@ import math
 import random
 import sys
 import time
+import os
 pygame.init()
 
 # configurações da tela
@@ -429,9 +430,12 @@ feedback_texto = ""
 feedback_timer = 0
 
 # sons feedback
-som_perfeito = pygame.mixer.Sound("../Jogo/perfeito.wav") if pygame.mixer.get_init() else None
-som_bom = pygame.mixer.Sound("../Jogo/bom.wav") if pygame.mixer.get_init() else None
-som_erro = pygame.mixer.Sound("../Jogo/erro.wav") if pygame.mixer.get_init() else None
+caminho_sons = os.path.join(os.path.dirname(__file__), "assets")
+
+som_perfeito = pygame.mixer.Sound(os.path.join(caminho_sons, "perfeito.wav")) if pygame.mixer.get_init() else None
+som_bom = pygame.mixer.Sound(os.path.join(caminho_sons, "bom.wav")) if pygame.mixer.get_init() else None
+som_erro = pygame.mixer.Sound(os.path.join(caminho_sons, "erro.wav")) if pygame.mixer.get_init() else None
+
 
 # ângulo inicial fatia
 angulo_inicio = random.uniform(0, 2 * math.pi)
