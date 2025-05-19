@@ -479,7 +479,7 @@ def atualizar_fase(pontuacao):
 #loop
 def desenha_grid():
     grid_spacing = 30
-    cor_grid = (255, 255, 255, 0)  # completamente invisível
+    cor_grid = (255, 255, 255, 0) 
 
     grid_surface = pygame.Surface((width, height), pygame.SRCALPHA)
 
