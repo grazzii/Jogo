@@ -52,6 +52,13 @@ mensagens_lumon = [
     "A gratidão impede a fuga.",
     "Você está onde deveria estar."
 ]
+
+    # para em coordenada * de 30
+def alinhar_para_grid(x, y, espacamento=30):
+    x_alinhado = round(x / espacamento) * espacamento
+    y_alinhado = round(y / espacamento) * espacamento
+    return x_alinhado, y_alinhado
+
 ultima_mensagem_tempo = 0
 intervalo_mensagens = 15000 
 mensagem_atual = ""
@@ -470,6 +477,18 @@ def atualizar_fase(pontuacao):
         fase_texto = "Fase 3 - Sala de Quebra"
 
 #loop
+def desenha_grid():
+    grid_spacing = 30
+    cor_grid = (255, 255, 255, 0)  # completamente invisível
+
+    grid_surface = pygame.Surface((width, height), pygame.SRCALPHA)
+
+    for x in range(0, width, grid_spacing):
+        pygame.draw.line(grid_surface, cor_grid, (x, 0), (x, height), 1)
+    for y in range(0, height, grid_spacing):
+        pygame.draw.line(grid_surface, cor_grid, (0, y), (width, y), 1)
+
+    screen.blit(grid_surface, (0, 0))
 
 while running:
     for event in pygame.event.get():
@@ -565,6 +584,7 @@ while running:
         angulo += velocidade_angular
         orbita_x = centro_x + raio_orbita * math.cos(angulo)
         orbita_y = centro_y + raio_orbita * math.sin(angulo)
+        orbita_x, orbita_y = alinhar_para_grid(orbita_x, orbita_y)
 
         for y in range(height):
             alpha = y / height
@@ -638,6 +658,8 @@ while running:
         fps = int(clock.get_fps())
         fps_text = font.render(f"FPS: {fps}", True, (140, 180, 220))
         screen.blit(fps_text, (10, 50))
+        desenha_grid()
+
 
         desenha_hud(pontuacao, id_funcionario)
 
