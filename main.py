@@ -154,7 +154,7 @@ def mostrar_menu_principal():
         screen.blit(subtitulo, (width//2 - subtitulo.get_width()//2, 130))
     
         pygame.draw.line(screen, (0, 100, 150), (width//2 - 100, 160), (width//2 + 100, 160), 2)
-        
+
         desenha_mark(screen, width//2 - 15, 220)
         
         # loop
@@ -442,7 +442,7 @@ caminho_sons = os.path.join(os.path.dirname(__file__), "assets")
 som_perfeito = pygame.mixer.Sound(os.path.join(caminho_sons, "perfeito.wav")) if pygame.mixer.get_init() else None
 som_bom = pygame.mixer.Sound(os.path.join(caminho_sons, "bom.wav")) if pygame.mixer.get_init() else None
 som_erro = pygame.mixer.Sound(os.path.join(caminho_sons, "erro.wav")) if pygame.mixer.get_init() else None
-
+tema_musical = pygame.mixer.Sound(os.path.join(caminho_sons, "theme.wav")) if pygame.mixer.get_init() else None
 
 # ângulo inicial fatia
 angulo_inicio = random.uniform(0, 2 * math.pi)
@@ -489,6 +489,8 @@ def desenha_grid():
         pygame.draw.line(grid_surface, cor_grid, (0, y), (width, y), 1)
 
     screen.blit(grid_surface, (0, 0))
+
+if tema_musical: tema_musical.play()
 
 while running:
     for event in pygame.event.get():
