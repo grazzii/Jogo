@@ -61,8 +61,6 @@ Além de funcional, o jogo será **motivacional**, mantendo os pacientes engajad
 ## 🧰 Tecnologias Utilizadas
 
 - **Python + Pygame**: motor de jogos 2D.
-- **SQLite (ou equivalente)**: armazenamento de sessões e progresso.
-- **Bibliotecas de tempo**: controle e cronometragem de tarefas.
 
 ---
 
