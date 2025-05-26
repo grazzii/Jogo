@@ -24,16 +24,16 @@ game_state = "menu"
 running = True
 
 # cores 
-COR_FUNDO = (5, 10, 20)  
-COR_TEXTO = (220, 220, 220)  
-COR_SOMBRA = (40, 50, 60)
-COR_DESTAQUE = (0, 100, 150)  
+cor_defundo = (5, 10, 20)  
+cortexto = (220, 220, 220)  
+sombra = (40, 50, 60)
+destaque = (0, 100, 150)  
 
 # das notificações
-COR_NOTIFICACAO = (15, 25, 35)
-COR_TITULO_NOT = (0, 80, 120)
-COR_TEXTO_NOT = (200, 200, 200)
-COR_BORDA_NOT = (50, 70, 90)
+cornotificacao = (15, 25, 35)
+notitulo = (0, 80, 120)
+cornottexto = (200, 200, 200)
+bordanot = (50, 70, 90)
 notificacao_tempo = 0
 notificacao_alpha = 0
 
@@ -65,7 +65,7 @@ mensagem_atual = ""
 
 # lumon
 
-def mostrar_mensagem_lumon():
+def mensagem_lumon():
     global mensagem_atual, ultima_mensagem_tempo, notificacao_tempo, notificacao_alpha
     agora = pygame.time.get_ticks()
     
@@ -86,37 +86,37 @@ def mostrar_mensagem_lumon():
         
         not_surface = pygame.Surface((largura_not, altura_not), pygame.SRCALPHA)
         
-        pygame.draw.rect(not_surface, (*COR_NOTIFICACAO, notificacao_alpha), 
+        pygame.draw.rect(not_surface, (*cornotificacao, notificacao_alpha), 
                          (0, 0, largura_not, altura_not), border_radius=5)
-        pygame.draw.rect(not_surface, (*COR_BORDA_NOT, notificacao_alpha), 
+        pygame.draw.rect(not_surface, (*bordanot, notificacao_alpha), 
                          (0, 0, largura_not, altura_not), 2, border_radius=5)
         
-        pygame.draw.rect(not_surface, (*COR_TITULO_NOT, notificacao_alpha), 
+        pygame.draw.rect(not_surface, (*notitulo, notificacao_alpha), 
                          (0, 0, largura_not, 25), border_radius=5)
-        pygame.draw.rect(not_surface, (*COR_BORDA_NOT, notificacao_alpha), 
+        pygame.draw.rect(not_surface, (*bordanot, notificacao_alpha), 
                          (0, 0, largura_not, 25), 2, border_radius=5)
         
-        desenha_mark(not_surface, 15, 40, None, 0.5)
+        o_mark(not_surface, 15, 40, None, 0.5)
         
         titulo = font_bold.render("LUMON", True, (240, 240, 240))
         not_surface.blit(titulo, (40, 5))
         
-        mensagem = font.render(mensagem_atual, True, (*COR_TEXTO_NOT, notificacao_alpha))
+        mensagem = font.render(mensagem_atual, True, (*cornottexto, notificacao_alpha))
         linhas = [mensagem_atual[i:i+30] for i in range(0, len(mensagem_atual), 30)]
         
         for i, linha in enumerate(linhas[:2]): 
-            texto = font.render(linha, True, (*COR_TEXTO_NOT, notificacao_alpha))
+            texto = font.render(linha, True, (*cornottexto, notificacao_alpha))
             not_surface.blit(texto, (40, 30 + i * 20))
         
         screen.blit(not_surface, (x_not, y_not))
 
 # botoes 
-def desenha_botao(texto, x, y, largura, altura, cor_normal, cor_destaque, acao=None):
+def botao(texto, x, y, largura, altura, cor_normal, destaque, acao=None):
     mouse = pygame.mouse.get_pos()
     clique = pygame.mouse.get_pressed()
     
     if x < mouse[0] < x + largura and y < mouse[1] < y + altura:
-        pygame.draw.rect(screen, cor_destaque, (x, y, largura, altura), border_radius=3)
+        pygame.draw.rect(screen, destaque, (x, y, largura, altura), border_radius=3)
         if clique[0] == 1 and acao is not None:
             return acao
     else:
@@ -134,7 +134,7 @@ def mostrar_menu_principal():
     global game_state, pontuacao
     
     while game_state == "menu":
-        screen.fill(COR_FUNDO)
+        screen.fill(cor_defundo)
         
         for y in range(height):
             alpha = y / height
@@ -155,7 +155,7 @@ def mostrar_menu_principal():
     
         pygame.draw.line(screen, (0, 100, 150), (width//2 - 100, 160), (width//2 + 100, 160), 2)
 
-        desenha_mark(screen, width//2 - 15, 220)
+        o_mark(screen, width//2 - 15, 220)
         
         # loop
 
@@ -167,14 +167,14 @@ def mostrar_menu_principal():
                 if event.key == pygame.K_ESCAPE:
                     return "quit"
         
-        acao = desenha_botao("INICIAR PROCEDIMENTO", width//2 - 120, 280, 240, 50, 
+        acao = botao("INICIAR PROCEDIMENTO", width//2 - 120, 280, 240, 50, 
                             (20, 30, 40), (0, 80, 120), "start")
         if acao == "start":
             game_state = "playing"
             pontuacao = 0
             return None  
         
-        acao = desenha_botao("TERMINAR SESSÃO", width//2 - 120, 350, 240, 50, 
+        acao = botao("TERMINAR SESSÃO", width//2 - 120, 350, 240, 50, 
                             (20, 30, 40), (120, 40, 40), "quit")
         if acao == "quit":
             return "quit"
@@ -207,7 +207,7 @@ def mostrar_menu_pausa():
         titulo = titulo_font.render("PROCEDIMENTO PAUSADO", True, (0, 150, 220))
         screen.blit(titulo, (width//2 - titulo.get_width()//2, panel_y + 30))
         
-        desenha_mark(screen, width//2 - 15, panel_y + 100, "erro")
+        o_mark(screen, width//2 - 15, panel_y + 100, "erro")
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -218,18 +218,18 @@ def mostrar_menu_pausa():
                     game_state = "playing"
                     return None
         
-        acao = desenha_botao("CONTINUAR PROCEDIMENTO", panel_x + 50, panel_y + 180, 300, 50, 
+        acao = botao("CONTINUAR PROCEDIMENTO", panel_x + 50, panel_y + 180, 300, 50, 
                             (20, 30, 40), (0, 80, 120), "continue")
         if acao == "continue":
             game_state = "playing"
         
-        acao = desenha_botao("REINICIAR REFINAMENTO", panel_x + 50, panel_y + 250, 300, 50, 
+        acao = botao("REINICIAR REFINAMENTO", panel_x + 50, panel_y + 250, 300, 50, 
                             (20, 30, 40), (80, 80, 40), "restart")
         if acao == "restart":
             game_state = "playing"
             return "restart"
         
-        acao = desenha_botao("TERMINAR SESSÃO", panel_x + 50, panel_y + 320, 300, 50, 
+        acao = botao("TERMINAR SESSÃO", panel_x + 50, panel_y + 320, 300, 50, 
                             (20, 30, 40), (120, 40, 40), "menu")
         if acao == "menu":
             game_state = "menu"
@@ -243,7 +243,7 @@ def mostrar_menu_pausa():
     return None
 
 # mark
-def desenha_mark(surface, x, y, expressao=None, escala=1.0):
+def o_mark(surface, x, y, expressao=None, escala=1.0):
     pygame.draw.circle(surface, (240, 224, 200), (int(x + 15*escala), int(y - 85*escala)), int(15*escala))
     
     pygame.draw.rect(surface, (10, 20, 30), (x + 2*escala, y - 100*escala, 26*escala, 10*escala))
@@ -271,7 +271,7 @@ def desenha_mark(surface, x, y, expressao=None, escala=1.0):
     pygame.draw.rect(surface, (220, 220, 220), (x + 12*escala, y - 50*escala, 6*escala, 20*escala))
 
 # hud do jogo
-def desenha_hud(pontuacao, id_func):
+def hud(pontuacao, id_func):
     conformidade = min(100, pontuacao // 10)
 
     pygame.draw.rect(screen, (20, 30, 40), (10, 10, 150, 20), border_radius=3)
@@ -323,7 +323,7 @@ def mostrar_relatorio_final(pontuacao, setor, id_func):
     selo_font = pygame.font.SysFont("Courier New", 16)
     selo = selo_font.render("APROVADO PELO DEPARTAMENTO DE REFINAMENTO", True, (0, 180, 100))
     screen.blit(selo, (width // 2 - selo.get_width() // 2, panel_y + panel_height - 50))
-    desenha_mark(screen, width//2, panel_y + panel_height - 30, "perfeito", 0.7)
+    o_mark(screen, width//2, panel_y + panel_height - 30, "perfeito", 0.7)
     
     pygame.display.flip()
     aguardando = True
@@ -335,7 +335,7 @@ def mostrar_relatorio_final(pontuacao, setor, id_func):
     sys.exit()
 
 # mensagens da intro
-def mostrar_intro_lumon():
+def intro():
     intro_font = pygame.font.SysFont("Courier New", 20, bold=True)
     intro_maior = pygame.font.SysFont("Courier New", 24, bold=True)
     
@@ -357,7 +357,7 @@ def mostrar_intro_lumon():
     ]
 
 # intro 
-    def desenhar_texto(texto, fonte, cor, y, alpha=255):
+    def o_texto(texto, fonte, cor, y, alpha=255):
         superficie = fonte.render(texto, True, cor)
         superficie.set_alpha(alpha)
         rect = superficie.get_rect(center=(width // 2, y))
@@ -376,9 +376,9 @@ def mostrar_intro_lumon():
             screen.fill((5, 15, 25))
             for j in range(i + 1):
                 if j < i:
-                    desenhar_texto(mensagens_intro[j], intro_font, (140, 180, 220), y_inicial + j * 35)
+                    o_texto(mensagens_intro[j], intro_font, (140, 180, 220), y_inicial + j * 35)
                 elif j == i:
-                    desenhar_texto(linha, intro_font, (140, 180, 220), y_inicial + j * 35, alpha)
+                    o_texto(linha, intro_font, (140, 180, 220), y_inicial + j * 35, alpha)
             pygame.display.flip()
             alpha += 15
             clock.tick(30)
@@ -396,10 +396,10 @@ def mostrar_intro_lumon():
         screen.fill((5, 15, 25))
 
         for i, linha in enumerate(mensagens_intro):
-            desenhar_texto(linha, intro_font, (140, 180, 220), y_inicial + i * 35)
+            o_texto(linha, intro_font, (140, 180, 220), y_inicial + i * 35)
         
-        desenhar_texto("A Lumon agradece sua colaboração.", intro_maior, (0, 150, 220), height - 60)
-        desenha_mark(screen, width // 2 - 15, height - 30)
+        o_texto("A Lumon agradece sua colaboração.", intro_maior, (0, 150, 220), height - 60)
+        o_mark(screen, width // 2 - 15, height - 30)
         
         pygame.display.flip()
         clock.tick(60)
@@ -409,7 +409,7 @@ if resultado_menu == "quit":
     pygame.quit()
     sys.exit()
 
-mostrar_intro_lumon()
+intro()
 
 # parametros da orbita
 centro_x, centro_y = width // 2, height // 2
@@ -450,7 +450,7 @@ angulo_fim = angulo_inicio + angulo_fatia
 
 # direcao setas
 
-setas_para_direcao = {
+setas= {
     pygame.K_UP: "up",
     pygame.K_DOWN: "down",
     pygame.K_LEFT: "left",
@@ -477,7 +477,7 @@ def atualizar_fase(pontuacao):
         fase_texto = "Fase 3 - Sala de Quebra"
 
 #loop
-def desenha_grid():
+def grid():
     grid_spacing = 30
     cor_grid = (255, 255, 255, 0) 
 
@@ -505,8 +505,8 @@ while running:
                 elif game_state == "paused":
                     game_state = "playing"
             
-            if game_state == "playing" and event.key in setas_para_direcao:
-                if setas_para_direcao[event.key] == direcao_seta:
+            if game_state == "playing" and event.key in setas:
+                if setas[event.key] == direcao_seta:
 
                     #calcula bolinha angulo
 
@@ -551,7 +551,7 @@ while running:
                     feedback_timer = pygame.time.get_ticks()
                     pygame.time.wait(1000)
     
-    # menu 
+    #menu 
     if game_state == "menu":
         resultado = mostrar_menu_principal()
         if resultado == "quit":
@@ -655,20 +655,19 @@ while running:
         texto_fase = font_bold.render(fase_texto, True, (240, 240, 240))
         screen.blit(texto_fase, (20, height - 35))
 
-        # FPS
 
         fps = int(clock.get_fps())
         fps_text = font.render(f"FPS: {fps}", True, (140, 180, 220))
         screen.blit(fps_text, (10, 50))
-        desenha_grid()
+        grid()
 
 
-        desenha_hud(pontuacao, id_funcionario)
+        hud(pontuacao, id_funcionario)
 
         # mark no canto
-        desenha_mark(screen, width - 60, height - 10)
+        o_mark(screen, width - 60, height - 10)
         
-        mostrar_mensagem_lumon()
+        mensagem_lumon()
 
     pygame.display.flip()
     clock.tick(60)
