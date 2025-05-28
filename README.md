@@ -10,9 +10,11 @@ O desempenho do jogador será avaliado por **métricas de precisão**, permitind
 
 ## 📖 Sinopse
 
-Em um mundo onde a inteligência artificial não foi inventada, humanos ainda são contratados para realizar trabalhos repetitivos, alienantes e desnecessários. Mark é um graduando de sistemas de informação contratado como estagiário por uma multinacional para auxiliar na função de agente de fluxo interno. 
-	Todas as mensagens que transitam internamente na empresa precisam de um direcionamento mecânico, preciso e específico. A empresa se empenhou em transformar a atividade em uma tarefa gameficada para aliviar a repetitividade e evitar a extrema insatisfação de seus funcionários. Sendo assim, sobrou para Mark, o estagiário, cuidar desta tarefa. Ele chega no trabalho, senta à sua mesa, liga o notebook e lá esta a sua função.
-	O trabalho é bem simples, um ponto roda em volta de um anel, simbolizando a mensagem e à área para a qual ela deve ser direcionada, Mark deve se atentar à direção informada no centro do anel, á velocidade do ponto (mensagem) e ao tamanho da janela de ação. Conforme a troca de mensagem entre setores vai ficando mais intenção, a velocidade aumenta e o tamanho da janela diminui, dificultando o seu trabalho.
+Em um mundo onde a inteligência artificial não foi inventada, humanos ainda são contratados para realizar trabalhos repetitivos, alienantes e desnecessários. Mark é um graduando de sistemas de informação contratado como estagiário por uma multinacional para auxiliar na função de agente de fluxo interno.
+
+Todas as mensagens que transitam internamente na empresa precisam de um direcionamento mecânico, preciso e específico. A empresa se empenhou em transformar a atividade em uma tarefa gameficada para aliviar a repetitividade e evitar a extrema insatisfação de seus funcionários. Sendo assim, sobrou para Mark, o estagiário, cuidar desta tarefa. Ele chega no trabalho, senta à sua mesa, liga o notebook e lá esta a sua função.
+
+O trabalho é bem simples, um ponto roda em volta de um anel, simbolizando a mensagem e à área para a qual ela deve ser direcionada, Mark deve se atentar à direção informada no centro do anel, á velocidade do ponto (mensagem) e ao tamanho da janela de ação. Conforme a troca de mensagem entre setores vai ficando mais intenção, a velocidade aumenta e o tamanho da janela diminui, dificultando o seu trabalho.
  
  ---
 
